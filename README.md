@@ -3,7 +3,22 @@
 
 ## Description
 
-libblueprint is a library providing a stable API for reading and writing the .blueprint files used by FtD
+libblueprint is a library providing a stable API for reading the .blueprint files used by FtD
+
+(Writing is not yet implemented)
+
+
+## Building
+
+Standard cmake build:
+
+1. `mkdir build && cd build`
+2. `cmake ..`
+3. `make`
+
+## Usage
+
+Have a look at the `examples` subdirectory
 
 ## License
 

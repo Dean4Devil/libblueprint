@@ -35,6 +35,7 @@ install_manifest.txt
 # CMake build directory
 /build/
 
+/tests/
 tags
 
 # Clang compilation database
