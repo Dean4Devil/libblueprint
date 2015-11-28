@@ -12,14 +12,16 @@
 
 // Parses the blueprint object inside the file-level object
 // Returns 0 if successful, 1 if not
-int parse_blueprint(const_bstring json, size_t json_length, struct blueprint *bp)
+int parse_blueprint(bstring json, struct blueprint *bp)
 {
     JSON_Value *bp_json;
     JSON_Object *root, *blueprint, *item_dictionary, *version;
     bstring Name, bp_name, name, game_version;
     uint32_t resource_cost[5];
 
-    bp_json = json_parse_string(bstr2cstr(json, '0'));
+    char *cjson = bstr2cstr(json, '0');
+    bp_json = json_parse_string(cjson);
+    free(cjson);
     if (bp_json == NULL)
         return 1;
 
@@ -43,11 +45,6 @@ int parse_blueprint(const_bstring json, size_t json_length, struct blueprint *bp
     bp->Name = bstrcpy(Name);
     bp->game_version = bstrcpy(game_version);
 
-    bdestroy(name);
-    bdestroy(bp_name);
-    bdestroy(Name);
-    bdestroy(game_version);
-
     bp->revision = (uint32_t) json_object_get_number(root, "Version");
 
     JSON_Array *jresource_cost = json_object_get_array(blueprint, "ResourceCost");
@@ -70,17 +67,21 @@ int parse_blueprint(const_bstring json, size_t json_length, struct blueprint *bp
     {
         uint32_t rbga = 0;
 
-        bstring color = bfromcstr(json_array_get_string(palette, i));
+        const char* ccolor = json_array_get_string(palette, i);
+        bstring color = bfromcstr(ccolor);
 
         // Create array of substrings
         struct bstrList *values = bsplit(color, ',');
         for (int n = 0; n < 4; n++)
         {
             char *ptr;
-            const char *str = bstr2cstr(values->entry[n], '0');
+            char *str = bstr2cstr(values->entry[n], '0');
             double dbl = strtod(str, &ptr);
+            free(str);
             bp->color_palette[i].array[n] = round(dbl * 255.0);
         }
+        bstrListDestroy(values);
+        bdestroy(color);
     }
 
     bp->total_block_count = (uint32_t) json_object_get_number(blueprint, "TotalBlockCount");
@@ -108,40 +109,62 @@ int parse_blueprint(const_bstring json, size_t json_length, struct blueprint *bp
         for (int n = 0; n < 3; n++)
         {
             char *ptr;
-            const char *str = bstr2cstr(pos_list->entry[n], '0');
+            char *str = bstr2cstr(pos_list->entry[n], '0');
             double dbl = strtod(str, &ptr);
+            free(str);
             uint32_t val = round(dbl);
             act->position.array[n] = val;
         }
+        bstrListDestroy(pos_list);
+        bdestroy(pos_string);
 
         // Only used for lookup, not saved after that since it has no further semantic value
-        bstring data_id;
-        const bstring bp1_string = bfromcstr(json_array_get_string(bp1, i));
+        const char *cb1 = json_array_get_string(bp1, i);
+        bstring bp1_string = bfromcstr(cb1);
         struct bstrList *bp1_values = bsplit(bp1_string, i);
-        if ((data_id = bp1_values->entry[3]) != NULL)
+        bdestroy(bp1_string);
+
+        bstring data_id;
+        if (NULL != (data_id = bp1_values->entry[3]))
         {
             for (int n = 0; n < json_array_get_count(block_string_ids); n++)
             {
-                const bstring test_id = bfromcstr(json_array_get_string(block_string_ids, n));
+                bstring test_id = bfromcstr(json_array_get_string(block_string_ids, n));
                 if (bstrcmp(test_id, bp1_values->entry[3]))
                 {
                     // BlockStringData at index n is the one we want
-                    act->string_data = bfromcstr(json_array_get_string(block_data, n));
+                    const char* cdata = json_array_get_string(block_data, n);
+                    act->string_data = bfromcstr(cdata);
                 }
                 bdestroy(test_id);
             }
 
             if (act->string_data == NULL)
                 return -1;
+
+            bdestroy(data_id);
         }
+        bstrListDestroy(bp1_values);
     }
 
     // I don't want to handle this case quite yet.
     bp->num_sc = 0;
     bp->SCs = NULL;
 
+    bdestroy(name);
+    bdestroy(bp_name);
+    bdestroy(Name);
+    bdestroy(game_version);
+
     json_value_free(bp_json);
     return 0;
+}
+
+void free_block(struct block *blk)
+{
+    if (blk == NULL)
+        return;
+    bdestroy(blk->string_data);
 }
 
 void free_blueprint(struct blueprint *bp)
@@ -153,7 +176,13 @@ void free_blueprint(struct blueprint *bp)
     bdestroy(bp->blueprint_name);
     bdestroy(bp->Name);
     bdestroy(bp->game_version);
+
     for (int i = 0; i < bp->num_sc; i++)
         free_blueprint(&bp->SCs[i]);
+
+    for (int i = 0; i < bp->total_block_count; i++)
+        free_block(&bp->blocks[i]);
+
+    free(bp->blocks);
     free(bp);
 }

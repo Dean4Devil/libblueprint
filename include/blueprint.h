@@ -105,9 +105,10 @@ typedef struct blueprint
 } BLUEPRINT;
 
 
-int parse_blueprint(const_bstring, size_t, struct blueprint *);
+int parse_blueprint(bstring, struct blueprint *);
 
 void free_blueprint(struct blueprint *);
+
 
 #ifdef __cplusplus
 } // extern "C"
