@@ -39,10 +39,8 @@ typedef struct block
 
 	// Extranous data for the block
 	// (i.e. Lua code for the Lua box)
+    // (BlockStringDataIds hold no semantic value -> not saved)
 	// string_data may be NULL
-	// string_data_id then defaults to 0
-	uint32_t string_data_id;
-
 	bstring string_data;
 } BLOCK;
 

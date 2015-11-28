@@ -90,6 +90,10 @@ int parse_blueprint(const_bstring json, size_t json_length, struct blueprint *bp
     JSON_Array *position = json_object_get_array(blueprint, "BLP");
     JSON_Array *rotation = json_object_get_array(blueprint, "BLR");
     JSON_Array *color = json_object_get_array(blueprint, "BCI");
+    JSON_Array *bp1 = json_object_get_array(blueprint, "BP1");
+
+    JSON_Array *block_string_ids = json_object_get_array(blueprint, "BlockStringDataIds");
+    JSON_Array *block_data = json_object_get_array(blueprint, "BlockStringData");
 
     for (int i = 0; i < bp->total_block_count; i++)
     {
@@ -100,7 +104,6 @@ int parse_blueprint(const_bstring json, size_t json_length, struct blueprint *bp
         act->color = (uint32_t) json_array_get_number(color, i);
 
         bstring pos_string = bfromcstr(json_array_get_string(position, i));
-
         struct bstrList *pos_list = bsplit(pos_string, ',');
         for (int n = 0; n < 3; n++)
         {
@@ -109,6 +112,27 @@ int parse_blueprint(const_bstring json, size_t json_length, struct blueprint *bp
             double dbl = strtod(str, &ptr);
             uint32_t val = round(dbl);
             act->position.array[n] = val;
+        }
+
+        // Only used for lookup, not saved after that since it has no further semantic value
+        bstring data_id;
+        const bstring bp1_string = bfromcstr(json_array_get_string(bp1, i));
+        struct bstrList *bp1_values = bsplit(bp1_string, i);
+        if ((data_id = bp1_values->entry[3]) != NULL)
+        {
+            for (int n = 0; n < json_array_get_count(block_string_ids); n++)
+            {
+                const bstring test_id = bfromcstr(json_array_get_string(block_string_ids, n));
+                if (bstrcmp(test_id, bp1_values->entry[3]))
+                {
+                    // BlockStringData at index n is the one we want
+                    act->string_data = bfromcstr(json_array_get_string(block_data, n));
+                }
+                bdestroy(test_id);
+            }
+
+            if (act->string_data == NULL)
+                return -1;
         }
     }
 
