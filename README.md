@@ -7,6 +7,8 @@ libblueprint is a library providing a stable API for reading the .blueprint file
 
 (Writing is not yet implemented)
 
+**This is alpha grade software. I did not pay any attention to security for this release.
+It *WILL* contain errors and bugs.**
 
 ## Building
 
