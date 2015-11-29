@@ -38,6 +38,9 @@ install_manifest.txt
 /tests/
 tags
 
+/examples/printinfo
+/examples/parse-serialize
+
 # Clang compilation database
 compile_commands.json
 
