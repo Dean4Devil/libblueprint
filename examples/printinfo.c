@@ -61,14 +61,25 @@ int open_file(char* filename)
         );
     }
 
+    uint32_t block_count[374] = { 0 };
+
     printf("\nSpecial Block data:\n");
     for (int n = 0; n < bp->total_block_count; n++)
     {
+        block_count[bp->blocks[n].material]++;
+
         bstring string_data;
         if ((string_data = bp->blocks[n].string_data) != NULL)
             printf("Block #%d:\n%s\n\n", n, string_data->data);
         bdestroy(string_data);
 
+    }
+
+    printf("Blocks used in this Blueprint:\nID 'Name': Amount\n");
+    for (int i=0;i<374;i++)
+    {
+        if (block_count[i] != 0)
+            printf("%d '%s': %d\n", i, get_name(i)->data, block_count[i]);
     }
 
     free_blueprint(bp);
