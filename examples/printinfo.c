@@ -79,7 +79,11 @@ int open_file(char* filename)
     for (int i=0;i<374;i++)
     {
         if (block_count[i] != 0)
-            printf("%d '%s': %d\n", i, get_name(i)->data, block_count[i]);
+        {
+            bstring blockname = get_name(i);
+            printf("%d '%s': %d\n", i, blockname->data, block_count[i]);
+            bdestroy(blockname);
+        }
     }
 
     free_blueprint(bp);
