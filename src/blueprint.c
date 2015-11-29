@@ -24,6 +24,13 @@ void free_blueprint(struct blueprint *bp)
     for (int i = 0; i < bp->num_sc; i++)
         free_blueprint(&bp->SCs[i]);
 
+    for (int i = 0; i < bp->total_block_count; i++)
+    {
+        if (bp->blocks[i].string_data == NULL)
+            continue;
+        bdestroy(bp->blocks[i].string_data);
+    }
+
     free(bp->blocks);
     free(bp);
 }
