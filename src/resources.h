@@ -1,7 +1,3 @@
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #pragma once
 
 /// The Resource Enum contains every blocktype known
@@ -16,7 +12,3 @@ typedef enum
 	leadblock = 5,
 	boatpropeller = 10
 } blocktypes;
-
-#ifdef __cplusplus
-}
-#endif
