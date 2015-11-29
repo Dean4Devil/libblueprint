@@ -5,6 +5,8 @@ project("libblueprint")
 SET(SRCS
     src/blueprint.c
     src/parse.c
+    src/item_dictionary.c
+    src/serialize.c
 
     src/parson.c
 
@@ -21,6 +23,7 @@ SET(HDR_PUB
 
 SET(HDR_PRV
     src/resources.h
+    src/item_dictionary.h
     src/parson.h
 
     src/bstrlib/bstraux.h

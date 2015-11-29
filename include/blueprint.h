@@ -1,9 +1,12 @@
+#pragma once
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 #include <stdio.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include <stdbool.h>
 
 #include "bstrlib.h"
@@ -102,10 +105,12 @@ typedef struct blueprint
 	// Revision of the blueprint
 	// Seen in game as the v1 after a blueprint's name
 	uint32_t revision;
+    uint32_t version;
 } BLUEPRINT;
 
 
 int parse_blueprint(bstring, struct blueprint *);
+bstring serialize_blueprint(struct blueprint *bp);
 
 void free_blueprint(struct blueprint *);
 

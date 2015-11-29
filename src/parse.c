@@ -14,7 +14,7 @@
 int parse_blueprint(bstring json, struct blueprint *bp)
 {
     JSON_Value *bp_json;
-    JSON_Object *root, *blueprint, *item_dictionary, *version;
+    JSON_Object *root, *blueprint, *item_dictionary;
     bstring Name, bp_name, name, game_version;
     uint32_t resource_cost[5];
 
@@ -33,6 +33,9 @@ int parse_blueprint(bstring json, struct blueprint *bp)
     blueprint = json_object_get_object(root, "Blueprint");
     if (blueprint == NULL)
         return 1;
+
+    bp->version = json_object_get_number(root, "Version");
+    bp->revision = json_object_get_number(blueprint, "blueprintVersion");
 
     Name = bfromcstr(json_object_get_string(root, "Name"));
     bp_name = bfromcstr(json_object_get_string(blueprint, "blueprintName"));
@@ -125,21 +128,20 @@ int parse_blueprint(bstring json, struct blueprint *bp)
         bstring nullcheck = bfromcstr("0");
         if (bstrcmp(bp1_values->entry[3], nullcheck) != 0)
         {
+            uint32_t id = atoi((char *) bp1_values->entry[3]->data);
             for (int n = 0; n < json_array_get_count(block_string_ids); n++)
             {
-                const char *ctest_id = json_array_get_string(block_string_ids, n+1);
-                if (ctest_id == NULL)
+                uint32_t test_id = json_array_get_number(block_string_ids, n);
+                if (test_id == 0)
                 {
                     break;
                 }
-                bstring test_id = bfromcstr(ctest_id);
-                if (bstrcmp(test_id, bp1_values->entry[3]) != 0)
+                if (id == test_id)
                 {
                     // BlockStringData at index n is the one we want
                     const char* cdata = json_array_get_string(block_data, n);
                     act->string_data = bfromcstr(cdata);
                 }
-                bdestroy(test_id);
             }
         }
         bdestroy(nullcheck);
