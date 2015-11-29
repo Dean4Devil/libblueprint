@@ -4,6 +4,8 @@ project("libblueprint")
 
 SET(SRCS
     src/blueprint.c
+    src/parse.c
+
     src/parson.c
 
     src/bstrlib/bstraux.c
