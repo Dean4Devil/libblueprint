@@ -112,6 +112,8 @@ typedef struct blueprint
 int parse_blueprint(bstring, struct blueprint *);
 bstring serialize_blueprint(struct blueprint *bp);
 
+bstring get_name(uint32_t key);
+
 void free_blueprint(struct blueprint *);
 
 
