@@ -8,8 +8,6 @@ int open_file(char* filename)
 {
 	FILE *fp;
 	struct stat filestatus;
-	int file_size;
-	char* file_contents;
 	struct blueprint *bp;
 
 	if(stat(filename, &filestatus) != 0)
@@ -18,36 +16,20 @@ int open_file(char* filename)
 		return 1;
 	}
 
-	file_size = filestatus.st_size;
-	file_contents = (char*)malloc(filestatus.st_size);
+    if ((fp = fopen(filename, "r")) != NULL)
+    {
+        bstring file_contents = bread((bNread) fread, fp);
+        fclose(fp);
 
-	if(file_contents == NULL)
-	{
-		fprintf(stderr, "MEMORY ERROR! Can not allocate %i bytes of RAM!\n", file_size);
-		return 1;
-	}
+        bp = malloc(sizeof(struct blueprint));
+        parse_blueprint(file_contents, bp);
 
-	fp = fopen(filename, "r");
-
-	if(fp == NULL)
-	{
-		fprintf(stderr, "Unable to open %s!\n", filename);
-		fclose(fp);
-		free(file_contents);
-		return 1;
-	}
-	if(fread(file_contents, file_size, 1, fp) != 1)
-	{
-		fprintf(stderr, "Unable to read contents of %s.\n", filename);
-		fclose(fp);
-		free(file_contents);
-		return 1;
-	}
-	fclose(fp);
-
-    bp = malloc(sizeof(struct blueprint));
-
-	parse_blueprint(bfromcstr(file_contents), file_size, bp);
+        bdestroy(file_contents);
+    }
+    else
+    {
+        return 1;
+    }
 
     printf("Blueprint %s aka %s aka %s\n\n",
            bp->name->data,
@@ -85,10 +67,12 @@ int open_file(char* filename)
         bstring string_data;
         if ((string_data = bp->blocks[n].string_data) != NULL)
             printf("Block #%d:\n%s\n\n", n, string_data->data);
+        bdestroy(string_data);
 
     }
 
-	free(file_contents);
+    free_blueprint(bp);
+
 	return 0;
 }
 
