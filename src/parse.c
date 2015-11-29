@@ -125,7 +125,6 @@ int parse_blueprint(bstring json, struct blueprint *bp)
         bstring nullcheck = bfromcstr("0");
         if (bstrcmp(bp1_values->entry[3], nullcheck) != 0)
         {
-            printf("BP1: %s\n", bp1_values->entry[3]->data);
             for (int n = 0; n < json_array_get_count(block_string_ids); n++)
             {
                 const char *ctest_id = json_array_get_string(block_string_ids, n+1);
@@ -133,7 +132,6 @@ int parse_blueprint(bstring json, struct blueprint *bp)
                 {
                     break;
                 }
-                printf("Tested against: %s\n", ctest_id);
                 bstring test_id = bfromcstr(ctest_id);
                 if (bstrcmp(test_id, bp1_values->entry[3]) != 0)
                 {
