@@ -22,7 +22,6 @@ SET(HDR_PUB
 )
 
 SET(HDR_PRV
-    src/resources.h
     src/item_dictionary.h
     src/parson.h
 
