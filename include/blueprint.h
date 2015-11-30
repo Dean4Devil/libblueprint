@@ -15,10 +15,12 @@ extern "C" {
 typedef struct block
 {
 	// Material of the block according to the ItemDictionary in every BP
+    // Saved as Blueprint.BlockIds
 	uint32_t material;
 
 	// Relative position of every block to the first placed block
 	// Game uses floats (why?) but accepts whole values as well
+    // Saved as Blueprint.BLP
     union
     {
         struct
@@ -33,16 +35,21 @@ typedef struct block
     } position;
 
 	// Int giving the rotation.
-	// I have no idea how this works yet.
+	// Has a value of 0-24, I assume this is 6 * 4, as in
+    // (front face (one of six a block has) * rotation)
+    // Saved as Blueprint.BLR
 	uint8_t rotation;
 
     // Color of the block.
     // Index for the color_palette value saved in the blueprint
+    // Saved as Blueprint.BCI
 	uint8_t color;
 
 	// Extranous data for the block
 	// (i.e. Lua code for the Lua box)
-    // (BlockStringDataIds hold no semantic value -> not saved)
+    // Saved as Blueprint.BlockStringData, which gets
+    // an unique ID by Blueprint.BlockStringDataIds,
+    // which is used as the fourth value in BP1
 	// string_data may be NULL
 	bstring string_data;
 } BLOCK;
@@ -51,15 +58,19 @@ typedef struct block
 typedef struct blueprint
 {
 	// Name of the blueprint
+    // Saved as Blueprint.Name
 	bstring name;
+    // Saved as Blueprint.blueprintName
     bstring blueprint_name;
+    // Saved as Name
     bstring Name;
     // Why three names you ask?
     // I have no clue either.
 
-	// 5 floats showing the resource cost of
+	// 5 uints showing the resource cost of
 	// Natural, Metal, Oil, Scrap and Crystal respectively
 	// Currently not used in-game (no cheating for you! :P)
+    // Saved as Blueprint.ResourceCost
 	uint32_t resource_cost[5];
 
     // Color palette this blueprint uses. Saved as RBGA value.
@@ -68,6 +79,7 @@ typedef struct blueprint
     // 29: Fleet Trim
     // 30: Fleet Secondary
     // 31: Fleet Main
+    // Saved in Blueprint.COL
     union
     {
         struct
@@ -88,6 +100,7 @@ typedef struct blueprint
 	uint32_t total_block_count;
 	struct block* blocks;
 
+    // Saved as Blueprint.MaxCords and Blueprint.MinCords
 	int32_t max_coords[3];
 	int32_t min_coords[3];
 
@@ -104,7 +117,9 @@ typedef struct blueprint
 
 	// Revision of the blueprint
 	// Seen in game as the v1 after a blueprint's name
+    // Saved as Blueprint.blueprintVersion
 	uint32_t revision;
+    // Saved as Version
     uint32_t version;
 } BLUEPRINT;
 
