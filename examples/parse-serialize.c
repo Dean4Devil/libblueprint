@@ -5,15 +5,15 @@
 
 int open_file(char* filename)
 {
-	FILE *fp;
-	struct stat filestatus;
-	struct blueprint *bp;
+    FILE *fp;
+    struct stat filestatus;
+    struct blueprint *bp;
 
-	if(stat(filename, &filestatus) != 0)
-	{
-		fprintf(stderr, "File %s not found!\n", filename);
-		return 1;
-	}
+    if(stat(filename, &filestatus) != 0)
+    {
+        fprintf(stderr, "File %s not found!\n", filename);
+        return 1;
+    }
 
     if ((fp = fopen(filename, "r")) != NULL)
     {
@@ -39,7 +39,7 @@ int open_file(char* filename)
 
     free_blueprint(bp);
 
-	return 0;
+    return 0;
 }
 
 int main(int argc, char *argv[])
@@ -49,6 +49,6 @@ int main(int argc, char *argv[])
         printf("Usage:\n %s filename\n", argv[0]);
         return 0;
     }
-	int retval = open_file(argv[1]);
-	return retval;
+    int retval = open_file(argv[1]);
+    return retval;
 }
