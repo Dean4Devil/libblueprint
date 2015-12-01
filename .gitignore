@@ -35,11 +35,9 @@ install_manifest.txt
 # CMake build directory
 /build/
 
+
 /tests/
 tags
-
-/examples/printinfo
-/examples/parse-serialize
 
 # Clang compilation database
 compile_commands.json
@@ -50,3 +48,6 @@ compile_commands.json
 
 # Vim Swapfiles
 *.swp
+
+# Examples
+/examples/build
