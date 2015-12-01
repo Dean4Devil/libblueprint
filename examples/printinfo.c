@@ -13,29 +13,44 @@ int open_file(char* filename)
     if(stat(filename, &filestatus) != 0)
     {
         fprintf(stderr, "File %s not found!\n", filename);
-        return 1;
+        return -1;
     }
 
-    if ((fp = fopen(filename, "r")) != NULL)
+    fp = fopen(filename, "r");
+
+    if (fp == NULL)
     {
-        bstring file_contents = bread((bNread) fread, fp);
-        fclose(fp);
-
-        bp = malloc(sizeof(struct blueprint));
-        parse_blueprint(file_contents, bp);
-
-        bdestroy(file_contents);
+        printf("Could not open file!\n");
+        return -1;
     }
-    else
+
+    bstring file_contents = bread((bNread) fread, fp);
+    fclose(fp);
+
+    bp = malloc(sizeof(struct blueprint));
+    parse_blueprint(file_contents, bp);
+
+    bdestroy(file_contents);
+
+
+    if (bp == NULL)
     {
-        return 1;
+        printf("Error parsing blueprint!\n");
+        return -1;
     }
 
-    printf("Blueprint %s aka %s aka %s\n\n",
-           bp->name->data,
-           bp->Name->data,
-           bp->blueprint_name->data
-    );
+    printf("Blueprint ");
+    if(bp->name != NULL)
+        printf("name: %s ", bp->name->data);
+
+    if(bp->Name != NULL)
+        printf("Name: %s ", bp->Name->data);
+
+    if (bp->blueprint_name != NULL)
+        printf("blueprintName: %s", bp->blueprint_name->data);
+
+    printf("\n\n");
+
     printf("Saved under game version: %s\n\nTotal block count: %i\n\n",
            bp->game_version->data,
            bp->total_block_count
