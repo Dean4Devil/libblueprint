@@ -1,7 +1,7 @@
 CC=clang
 CFLAGS=-g -Wall -std=c11 -fPIC
 INCLUDE=../include
-LINK=-lblueprint -lm
+LINK=-lblueprint_static -lm
 
 # Build directory used for cmake build
 LIBBDIR=../build

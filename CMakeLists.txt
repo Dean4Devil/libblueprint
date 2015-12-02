@@ -4,7 +4,7 @@ set(CMAKE_C_STANDARD 11)
 
 project("libblueprint")
 
-SET(SRCS
+set(SRCS
     src/blueprint.c
     src/parse.c
     src/item_dictionary.c
@@ -18,12 +18,12 @@ SET(SRCS
     src/bstrlib/utf8util.c
 )
 
-SET(HDR_PUB
+set(HDR_PUB
     include/blueprint.h
     include/bstrlib.h
 )
 
-SET(HDR_PRV
+set(HDR_PRV
     src/item_dictionary.h
     src/parson.h
 
@@ -32,10 +32,17 @@ SET(HDR_PRV
     src/bstrlib/utf8util.h
 )
 
-INCLUDE_DIRECTORIES(
+include_directories(
     include
 )
 
-ADD_LIBRARY(blueprint SHARED
+add_library(blueprint SHARED
     ${SRCS} ${HDR_PUB} ${HDR_PRV}
+)
+
+add_library(blueprint_static STATIC
+    ${SRCS} ${HDR_PUB} ${HDR_PRV}
+)
+set_target_properties(blueprint_static PROPERTIES
+    POSITION_INDEPENDENT_CODE ON
 )
