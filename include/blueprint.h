@@ -45,8 +45,11 @@ typedef struct block
     // Saved as Blueprint.BCI
     uint8_t color;
 
-    // Extranous data for the block
-    // (i.e. Lua code for the Lua box)
+    double bp1[4];
+    uint32_t bp2[4];
+
+    // Extra data for the block
+    // (e.g. Lua code for the Lua box)
     // Saved as Blueprint.BlockStringData, which gets
     // an unique ID by Blueprint.BlockStringDataIds,
     // which is used as the fourth value in BP1
@@ -112,9 +115,14 @@ typedef struct blueprint
     // (Compatibiliyt mode maybe?)
     bstring game_version;
 
-    // Sub-Vehicles (only set in a mothership)
+    // Sub-Vehicles (Turrents, ship spawners, ...)
     uint32_t num_sc;
     struct blueprint *SCs;
+
+    // Used by SubConstructables to save their spawn position.
+    // TODO: Relative to parent's coordinate root?
+    int32_t local_position[3];
+    double local_rotation[4];
 
     // Revision of the blueprint
     // Seen in game as the v1 after a blueprint's name
@@ -122,6 +130,26 @@ typedef struct blueprint
     uint32_t revision;
     // Saved as Version
     uint32_t version;
+
+    bool design_changed;
+
+    // I have no idea what any of they do, but lets just save them
+
+    // Saved as CSI
+    // Apparently always contains 40 values.
+    double constructable_special_info[40];
+
+    // TODO: Parse these into uint32_t[4]'s
+    bstring parameter1;
+    bstring parameter2;
+
+    uint32_t id;
+    uint32_t force_id;
+
+    // TODO: Parse these into double[3]
+    // Seems to always be 60
+    uint32_t item_number;
+
 } BLUEPRINT;
 
 

@@ -20,11 +20,13 @@ void free_blueprint(struct blueprint *bp)
     bdestroy(bp->blueprint_name);
     bdestroy(bp->Name);
     bdestroy(bp->game_version);
+    bdestroy(bp->parameter1);
+    bdestroy(bp->parameter2);
 
     for (int i = 0; i < bp->num_sc; i++)
-        free_blueprint(&bp->SCs[i]);
+        /* free_blueprint(&bp->SCs[i]); */
 
-    for (int i = 0; i < bp->total_block_count; i++)
+    for (int i = 0; i < bp->main_block_count; i++)
     {
         if (bp->blocks[i].string_data == NULL)
             continue;
@@ -34,3 +36,4 @@ void free_blueprint(struct blueprint *bp)
     free(bp->blocks);
     free(bp);
 }
+
