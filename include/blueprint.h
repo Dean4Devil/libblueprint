@@ -96,8 +96,9 @@ typedef struct blueprint
 
     } color_palette[32];
 
-    // Number of blocks in the blueprint and array of blocks
+    // Number of blocks in the blueprint (including SCs & excluding SCs) and array of blocks
     uint32_t total_block_count;
+    uint32_t main_block_count;
     struct block* blocks;
 
     // Saved as Blueprint.MaxCords and Blueprint.MinCords

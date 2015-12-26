@@ -98,7 +98,11 @@ int parse_blueprint(bstring json, struct blueprint *bp)
     JSON_Array *block_string_ids = json_object_get_array(blueprint, "BlockStringDataIds");
     JSON_Array *block_data = json_object_get_array(blueprint, "BlockStringData");
 
-    for (int i = 0; i < bp->total_block_count; i++)
+    bp->total_block_count = (uint32_t) json_object_get_number(blueprint, "TotalBlockCount");
+    bp->main_block_count = (uint32_t) json_array_get_count(material);
+    bp->blocks = calloc(bp->main_block_count, sizeof(struct block));
+
+    for (int i = 0; i < bp->main_block_count; i++)
     {
         struct block *act = &bp->blocks[i];
 
