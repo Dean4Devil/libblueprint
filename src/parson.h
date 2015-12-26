@@ -27,10 +27,10 @@
 #ifdef __cplusplus
 extern "C"
 {
-#endif    
-    
-#include <stddef.h>   /* size_t */    
-    
+#endif
+
+#include <stddef.h>   /* size_t */
+
 /* Types and enums */
 typedef struct json_object_t JSON_Object;
 typedef struct json_array_t  JSON_Array;
@@ -46,34 +46,34 @@ enum json_value_type {
     JSONBoolean = 6
 };
 typedef int JSON_Value_Type;
-    
+
 enum json_result_t {
     JSONSuccess = 0,
     JSONFailure = -1
 };
 typedef int JSON_Status;
-    
+
 typedef void * (*JSON_Malloc_Function)(size_t);
 typedef void   (*JSON_Free_Function)(void *);
 
 /* Call only once, before calling any other function from parson API. If not called, malloc and free
    from stdlib will be used for all allocations */
 void json_set_allocation_functions(JSON_Malloc_Function malloc_fun, JSON_Free_Function free_fun);
-    
+
 /* Parses first JSON value in a file, returns NULL in case of error */
 JSON_Value * json_parse_file(const char *filename);
 
 /* Parses first JSON value in a file and ignores comments (/ * * / and //),
    returns NULL in case of error */
 JSON_Value * json_parse_file_with_comments(const char *filename);
-    
+
 /*  Parses first JSON value in a string, returns NULL in case of error */
 JSON_Value * json_parse_string(const char *string);
 
 /*  Parses first JSON value in a string and ignores comments (/ * * / and //),
     returns NULL in case of error */
 JSON_Value * json_parse_string_with_comments(const char *string);
-    
+
 /* Serialization */
 size_t      json_serialization_size(const JSON_Value *value); /* returns 0 on fail */
 JSON_Status json_serialize_to_buffer(const JSON_Value *value, char *buf, size_t buf_size_in_bytes);
