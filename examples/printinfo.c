@@ -76,17 +76,24 @@ int open_file(char* filename)
         );
     }
 
+    printf("\nParameter1: %s\nParameter1: %s\n", bp->parameter1->data, bp->parameter2->data);
+
+    printf("Local Position: %d, %d, %d\n", bp->local_position[0], bp->local_position[1], bp->local_position[2]);
+    printf("Local Rotation: %f, %f, %f, %f\n", bp->local_rotation[0], bp->local_rotation[1], bp->local_rotation[2], bp->local_rotation[3]);
+
     uint32_t block_count[374] = { 0 };
 
     printf("\nSpecial Block data:\n");
-    for (int n = 0; n < bp->total_block_count; n++)
+    for (int n = 0; n < bp->main_block_count; n++)
     {
         block_count[bp->blocks[n].material]++;
 
-        bstring string_data;
-        if ((string_data = bp->blocks[n].string_data) != NULL)
-            printf("Block #%d:\n%s\n\n", n, string_data->data);
-        bdestroy(string_data);
+        if(bp->blocks[n].string_data != NULL)
+        {
+            bstring string_data;
+            if ((string_data = bp->blocks[n].string_data) != NULL)
+                printf("Block #%d:\n%s\n\n", n, string_data->data);
+        }
 
     }
 
@@ -98,6 +105,15 @@ int open_file(char* filename)
             bstring blockname = get_name(i);
             printf("%d '%s': %d\n", i, blockname->data, block_count[i]);
             bdestroy(blockname);
+        }
+    }
+
+    if (bp->num_sc != 0)
+    {
+        printf("\nThis vessel contains %d subconstructables.\n", bp->num_sc);
+        for (int i = 0; i < bp->num_sc; i++)
+        {
+            printf("  SC with %d blocks\n", bp->SCs[i].total_block_count);
         }
     }
 
