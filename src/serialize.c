@@ -54,7 +54,7 @@ bstring serialize_blueprint(struct blueprint *bp)
 
         json_object_set_boolean(object, "designChanged", bp->design_changed);
 
-        json_object_set_number(object, "BlockCount", bp->total_block_count);
+        json_object_set_number(object, "BlockCount", bp->main_block_count);
         json_object_set_number(object, "TotalBlockCount", bp->total_block_count);
         json_object_set_number(object, "LastAliveBlock", bp->last_alive_block);
         json_object_set_number(object, "blueprintVersion", bp->revision);
@@ -167,7 +167,7 @@ bstring serialize_blueprint(struct blueprint *bp)
         JSON_Array *data = json_array(data_val);
         JSON_Array *data_id = json_array(data_id_val);
 
-        for (int i = 0; i < bp->total_block_count; i++)
+        for (int i = 0; i < bp->main_block_count; i++)
         {
             struct block cur = bp->blocks[i];
             json_array_append_number(material, cur.material);
