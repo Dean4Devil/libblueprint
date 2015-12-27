@@ -2,7 +2,7 @@
 #include "parson.h"
 #include "item_dictionary.h"
 
-JSON_Object *serialize_bp_into_obj(JSON_Value *value, struct blueprint *bp)
+JSON_Object *serialize_bp_into_obj(JSON_Value *value, blueprint bp)
 {
         JSON_Object *object = json_object(value);
 
@@ -140,7 +140,7 @@ JSON_Object *serialize_bp_into_obj(JSON_Value *value, struct blueprint *bp)
 
         for (int i = 0; i < bp->main_block_count; i++)
         {
-            struct block cur = bp->blocks[i];
+            block_t cur = bp->blocks[i];
             json_array_append_number(material, cur.material);
             json_array_append_number(rotation, cur.rotation);
             json_array_append_number(color, cur.color);
@@ -179,7 +179,7 @@ JSON_Object *serialize_bp_into_obj(JSON_Value *value, struct blueprint *bp)
         return object;
 }
 
-bstring serialize_blueprint(struct blueprint *bp)
+bstring serialize_blueprint(blueprint bp)
 {
     JSON_Value *joutput_val = json_value_init_object();
     JSON_Object *output = json_value_get_object(joutput_val);

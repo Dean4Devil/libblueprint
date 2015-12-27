@@ -9,7 +9,7 @@
 #include "bstrlib.h"
 #include "blueprint.h"
 
-int parse_blueprint_json(JSON_Object *blueprint, struct blueprint *bp)
+int parse_blueprint_json(JSON_Object *blueprint, blueprint_t *bp)
 {
     bstring Name, bp_name, name, game_version;
     uint32_t resource_cost[5];
@@ -113,11 +113,11 @@ int parse_blueprint_json(JSON_Object *blueprint, struct blueprint *bp)
 
     bp->total_block_count = (uint32_t) json_object_get_number(blueprint, "TotalBlockCount");
     bp->main_block_count = (uint32_t) json_object_get_number(blueprint, "BlockCount");
-    bp->blocks = calloc(bp->main_block_count, sizeof(struct block));
+    bp->blocks = calloc(bp->main_block_count, sizeof(block_t));
 
     for (int i = 0; i < bp->main_block_count; i++)
     {
-        struct block *act = &bp->blocks[i];
+        block_t *act = &bp->blocks[i];
 
         act->material = (uint32_t) json_array_get_number(material, i);
         act->rotation = (uint32_t) json_array_get_number(rotation, i);
@@ -181,7 +181,7 @@ int parse_blueprint_json(JSON_Object *blueprint, struct blueprint *bp)
 
     JSON_Array *subconstructables = json_object_get_array(blueprint, "SCs");
     bp->num_sc = json_array_get_count(subconstructables);
-    bp->SCs = calloc(bp->num_sc, sizeof(struct blueprint));
+    bp->SCs = calloc(bp->num_sc, sizeof(blueprint_t));
     for (int i = 0; i < bp->num_sc; i++)
     {
         JSON_Value *sc_json = json_array_get_value(subconstructables, i);
@@ -194,7 +194,7 @@ int parse_blueprint_json(JSON_Object *blueprint, struct blueprint *bp)
     return 0;
 }
 
-int parse_blueprint_root(JSON_Object *root, struct blueprint *bp)
+int parse_blueprint_root(JSON_Object *root, blueprint bp)
 {
     bp->version = json_object_get_number(root, "Version");
 
@@ -213,7 +213,7 @@ int parse_blueprint_root(JSON_Object *root, struct blueprint *bp)
 
 // Parses the blueprint object inside the file-level object
 // Returns 0 if successful, 1 if not
-int parse_blueprint(bstring json, struct blueprint *bp)
+int parse_blueprint(bstring json, blueprint bp)
 {
     JSON_Value *bp_json;
     JSON_Object *root;

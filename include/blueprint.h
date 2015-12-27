@@ -12,7 +12,7 @@ extern "C" {
 #include "bstrlib.h"
 
 // Struct representing a single block
-typedef struct block
+typedef struct
 {
     // Material of the block according to the ItemDictionary in every BP
     // Saved as Blueprint.BlockIds
@@ -55,10 +55,10 @@ typedef struct block
     // which is used as the fourth value in BP1
     // string_data may be NULL
     bstring string_data;
-} BLOCK;
+} block_t;
 
 // Struct representing a blueprint
-typedef struct blueprint
+typedef struct bp
 {
     // Name of the blueprint
     // Saved as Blueprint.Name
@@ -100,7 +100,7 @@ typedef struct blueprint
     // Number of blocks in the blueprint (including SCs & excluding SCs) and array of blocks
     uint32_t total_block_count;
     uint32_t main_block_count;
-    struct block* blocks;
+    block_t* blocks;
 
     // Saved as Blueprint.MaxCords and Blueprint.MinCords
     int32_t max_coords[3];
@@ -115,7 +115,7 @@ typedef struct blueprint
 
     // Sub-Vehicles (Turrents, ship spawners, ...)
     uint32_t num_sc;
-    struct blueprint *SCs;
+    struct bp *SCs;
 
     // Used by SubConstructables to save their spawn position.
     // TODO: Relative to parent's coordinate root?
@@ -148,15 +148,15 @@ typedef struct blueprint
     // Seems to always be 60
     uint32_t item_number;
 
-} BLUEPRINT;
+} blueprint_t;
+typedef blueprint_t * blueprint;
 
-
-int parse_blueprint(bstring, struct blueprint *);
-bstring serialize_blueprint(struct blueprint *bp);
+int parse_blueprint(bstring, blueprint);
+bstring serialize_blueprint(blueprint);
 
 bstring get_name(uint32_t key);
 
-void free_blueprint(struct blueprint *);
+void free_blueprint(blueprint);
 
 
 #ifdef __cplusplus

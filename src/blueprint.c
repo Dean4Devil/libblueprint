@@ -11,7 +11,7 @@
 #include "bstrlib.h"
 
 
-void free_blueprint(struct blueprint *bp)
+void free_blueprint(blueprint bp)
 {
     if (bp == NULL)
         return;
