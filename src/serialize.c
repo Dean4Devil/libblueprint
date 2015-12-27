@@ -138,13 +138,13 @@ bstring serialize_blueprint(struct blueprint *bp)
         {
             double r,g,b,a;
             // Get color values in percent
-            r = (double) bp->color_palette[i].color.red   / 256;
-            g = (double) bp->color_palette[i].color.green / 256;
-            b = (double) bp->color_palette[i].color.blue  / 256;
-            a = (double) bp->color_palette[i].color.alpha / 256;
+            r = (double) bp->color_palette[i].array[0] / 256;
+            g = (double) bp->color_palette[i].array[1] / 256;
+            b = (double) bp->color_palette[i].array[2] / 256;
+            a = (double) bp->color_palette[i].array[3] / 255;
 
             char string[20];
-            snprintf(string, 20, "%0.2f,%.2f,%.2f,%.2f", r,b,g,a);
+            snprintf(string, 20, "%0.2f,%.2f,%.2f,%.2f", r,g,b,a);
             json_array_append_string(palette, string);
         }
         json_object_set_value(object, "COL", palette_val);
