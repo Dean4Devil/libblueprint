@@ -9,22 +9,13 @@
 #include "bstrlib.h"
 #include "blueprint.h"
 
-int parse_blueprint_json(JSON_Value *bp_json, struct blueprint *bp)
+int parse_blueprint_json(JSON_Object *blueprint, struct blueprint *bp)
 {
-    JSON_Object *root, *blueprint, *item_dictionary;
     bstring Name, bp_name, name, game_version;
     uint32_t resource_cost[5];
 
-    root = json_value_get_object(bp_json);
-
-    blueprint = json_object_get_object(root, "Blueprint");
-    if (blueprint == NULL)
-        return 1;
-
-    bp->version = json_object_get_number(root, "Version");
     bp->revision = json_object_get_number(blueprint, "blueprintVersion");
 
-    Name = bfromcstr(json_object_get_string(root, "Name"));
     bp_name = bfromcstr(json_object_get_string(blueprint, "blueprintName"));
     name = bfromcstr(json_object_get_string(blueprint, "Name"));
     game_version = bfromcstr(json_object_get_string(blueprint, "GameVersion"));
@@ -194,10 +185,29 @@ int parse_blueprint_json(JSON_Value *bp_json, struct blueprint *bp)
     for (int i = 0; i < bp->num_sc; i++)
     {
         JSON_Value *sc_json = json_array_get_value(subconstructables, i);
-        int retval = parse_blueprint_json(sc_json, &bp->SCs[i]);
+        JSON_Object *sc_obj = json_value_get_object(sc_json);
+        int retval = parse_blueprint_json(sc_obj, &bp->SCs[i]);
+        if (retval != 0)
+            return retval;
     }
 
-    json_value_free(bp_json);
+    return 0;
+}
+
+int parse_blueprint_root(JSON_Object *root, struct blueprint *bp)
+{
+    bp->version = json_object_get_number(root, "Version");
+
+    bp->Name = bfromcstr(json_object_get_string(root, "Name"));
+
+    JSON_Object *blueprint = json_object_get_object(root, "Blueprint");
+    if (blueprint == NULL)
+        return 1;
+
+    int retval;
+    if ((retval = parse_blueprint_json(blueprint, bp)) != 0)
+        return retval;
+
     return 0;
 }
 
@@ -206,6 +216,7 @@ int parse_blueprint_json(JSON_Value *bp_json, struct blueprint *bp)
 int parse_blueprint(bstring json, struct blueprint *bp)
 {
     JSON_Value *bp_json;
+    JSON_Object *root;
 
     char *cjson = bstr2cstr(json, '0');
     bp_json = json_parse_string(cjson);
@@ -213,5 +224,14 @@ int parse_blueprint(bstring json, struct blueprint *bp)
     if (bp_json == NULL)
         return 1;
 
-    return parse_blueprint_json(bp_json, bp);
+    root = json_value_get_object(bp_json);
+    int retval;
+    if ((retval = parse_blueprint_root(root, bp)) != 0)
+    {
+        json_value_free(bp_json);
+        return retval;
+    }
+
+    json_value_free(bp_json);
+    return 0;
 }
