@@ -112,7 +112,7 @@ int parse_blueprint_json(JSON_Object *blueprint, struct blueprint *bp)
     JSON_Array *block_data = json_object_get_array(blueprint, "BlockStringData");
 
     bp->total_block_count = (uint32_t) json_object_get_number(blueprint, "TotalBlockCount");
-    bp->main_block_count = (uint32_t) json_array_get_count(material);
+    bp->main_block_count = (uint32_t) json_object_get_number(blueprint, "BlockCount");
     bp->blocks = calloc(bp->main_block_count, sizeof(struct block));
 
     for (int i = 0; i < bp->main_block_count; i++)
