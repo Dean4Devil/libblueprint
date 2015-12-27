@@ -290,7 +290,7 @@ static item_t item_dictionary[] =
       { 290, bsStatic(""), bsStatic("6f0efd3e-c241-437c-b25f-92dc1e83332c") },
       { 291, bsStatic(""), bsStatic("9a564782-3a07-472b-ae06-5a7dfd123e7d") },
       { 292, bsStatic(""), bsStatic("7d005e15-c63a-44f0-b12e-b8599a9f0424") },
-      { 293, bsStatic(""), bsStatic("3296c67d-6ace-44dd-8e86-335b9a90ad80") },
+      { 293, bsStatic("Wood down slope (4m)"), bsStatic("3296c67d-6ace-44dd-8e86-335b9a90ad80") },
       { 294, bsStatic(""), bsStatic("2a3905ff-2030-421d-a2bf-90fba71c1c5e") },
       { 295, bsStatic(""), bsStatic("db9ed060-d556-435b-945c-19c923e233d3") },
       { 296, bsStatic(""), bsStatic("9d43ff24-4165-4c48-bc5d-ccb89b0667bd") },
