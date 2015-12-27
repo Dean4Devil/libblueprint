@@ -2,54 +2,13 @@
 #include "parson.h"
 #include "item_dictionary.h"
 
-bstring serialize_blueprint(struct blueprint *bp)
+JSON_Object *serialize_bp_into_obj(JSON_Value *value, struct blueprint *bp)
 {
-    JSON_Value *joutput_val = json_value_init_object();
-    JSON_Object *output = json_value_get_object(joutput_val);
-    char *serialized_string = NULL;
-    bstring output_str;
-
-    // Name
-    if (bp->Name != NULL)
-        json_object_set_string(output, "Name", (char *) bp->Name->data);
-    else
-        json_object_set_null(output, "Name");
-
-    // Version
-    json_object_set_number(output, "Version", bp->version);
-
-    // ItemDictionary
-    {
-        JSON_Value *value = json_value_init_object();
-        JSON_Object *object = json_object(value);
-
-        serialize_item_dictionary(object);
-
-        json_object_set_value(output, "ItemDictionary", value);
-    }
-
-    // FileModelVersion
-    {
-        JSON_Value *value = json_value_init_object();
-        JSON_Object *object = json_object(value);
-
-        json_object_set_number(object, "Major", 1);
-        json_object_set_number(object, "Minor", 0);
-
-        json_object_set_value(output, "FileModelVersion", value);
-    }
-
-    // Blueprint
-    {
-        JSON_Value *value = json_value_init_object();
         JSON_Object *object = json_object(value);
 
         // FIXME: Statically set values are voiding information!
-        JSON_Value *scs = json_value_init_array();
         JSON_Value *bei = json_value_init_array();
-        json_object_set_value(object, "SCs", scs);
         json_object_set_value(object, "BEI", bei);
-
         // ENDFIXME
 
         json_object_set_boolean(object, "designChanged", bp->design_changed);
@@ -132,6 +91,18 @@ bstring serialize_blueprint(struct blueprint *bp)
             json_object_set_string(object, "MinCords", buffer);
         }
 
+        {
+            JSON_Value *scs = json_value_init_array();
+            JSON_Array *scsa = json_value_get_array(scs);
+            for (int i = 0; i < bp->num_sc; i++)
+            {
+                JSON_Value *sc = json_value_init_object();
+                serialize_bp_into_obj(sc, &bp->SCs[i]);
+                json_array_append_value(scsa, sc);
+            }
+            json_object_set_value(object, "SCs", scs);
+        }
+
         JSON_Value *palette_val = json_value_init_array();
         JSON_Array *palette = json_array(palette_val);
         for (int i = 0; i < 32; i++)
@@ -182,7 +153,7 @@ bstring serialize_blueprint(struct blueprint *bp)
             );
             json_array_append_string(position, pos);
 
-            if (cur.string_data != NULL)
+            if (cur.string_data != NULL && cur.string_data->mlen != -1)
             {
                 json_array_append_string(data, (char *) cur.string_data->data);
                 json_array_append_number(data_id, cur.bp1[3]);
@@ -205,7 +176,50 @@ bstring serialize_blueprint(struct blueprint *bp)
         json_object_set_value(object, "BlockStringData", data_val);
         json_object_set_value(object, "BlockStringDataIds", data_id_val);
 
+        return object;
+}
 
+bstring serialize_blueprint(struct blueprint *bp)
+{
+    JSON_Value *joutput_val = json_value_init_object();
+    JSON_Object *output = json_value_get_object(joutput_val);
+    char *serialized_string = NULL;
+    bstring output_str;
+
+    // Name
+    if (bp->Name != NULL)
+        json_object_set_string(output, "Name", (char *) bp->Name->data);
+    else
+        json_object_set_null(output, "Name");
+
+    // Version
+    json_object_set_number(output, "Version", bp->version);
+
+    // ItemDictionary
+    {
+        JSON_Value *value = json_value_init_object();
+        JSON_Object *object = json_object(value);
+
+        serialize_item_dictionary(object);
+
+        json_object_set_value(output, "ItemDictionary", value);
+    }
+
+    // FileModelVersion
+    {
+        JSON_Value *value = json_value_init_object();
+        JSON_Object *object = json_object(value);
+
+        json_object_set_number(object, "Major", 1);
+        json_object_set_number(object, "Minor", 0);
+
+        json_object_set_value(output, "FileModelVersion", value);
+    }
+
+    // Blueprint
+    {
+        JSON_Value *value = json_value_init_object();
+        serialize_bp_into_obj(value, bp);
         json_object_set_value(output, "Blueprint", value);
     }
 
