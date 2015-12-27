@@ -8,7 +8,7 @@ int open_file(char* filename)
 {
     FILE *fp;
     struct stat filestatus;
-    struct blueprint *bp;
+    blueprint bp;
 
     if(stat(filename, &filestatus) != 0)
     {
@@ -27,7 +27,7 @@ int open_file(char* filename)
     bstring file_contents = bread((bNread) fread, fp);
     fclose(fp);
 
-    bp = malloc(sizeof(struct blueprint));
+    bp = malloc(sizeof(blueprint_t));
     parse_blueprint(file_contents, bp);
 
     bdestroy(file_contents);
