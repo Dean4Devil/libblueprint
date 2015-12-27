@@ -40,20 +40,21 @@ int open_file(char* filename)
     }
 
     printf("Blueprint ");
-    if(bp->name != NULL)
+    if(bp->name != NULL && bp->name->mlen != -1)
         printf("name: %s ", bp->name->data);
 
-    if(bp->Name != NULL)
+    if(bp->Name != NULL && bp->Name->mlen != -1)
         printf("Name: %s ", bp->Name->data);
 
-    if (bp->blueprint_name != NULL)
+    if (bp->blueprint_name != NULL && bp->Name->mlen != -1)
         printf("blueprintName: %s", bp->blueprint_name->data);
 
     printf("\n\n");
 
-    printf("Saved under game version: %s\n\nTotal block count: %i\n\n",
+    printf("Saved under game version: %s\n\nTotal block count: %i\nMain block count: %i\n",
            bp->game_version->data,
-           bp->total_block_count
+           bp->total_block_count,
+           bp->main_block_count
     );
     printf("Resouce Cost:\n  Natural: %d, Metal: %d, Oil: %d, Scrap: %d, Crystal: %d\n\n",
            bp->resource_cost[0],
@@ -66,13 +67,12 @@ int open_file(char* filename)
     printf("Color Palette used for this blueprint:\n");
     for (int i = 0; i < 32; i++)
     {
-        printf("  Color Nr. %d: Hex 0x%08x, RGBA %d %d %d %d\n",
+        printf("  Color Nr. %d: RGBA %d %d %d %d\n",
                i,
-               bp->color_palette[i].hex,
-               bp->color_palette[i].color.red,
-               bp->color_palette[i].color.green,
-               bp->color_palette[i].color.blue,
-               bp->color_palette[i].color.alpha
+               bp->color_palette[i].array[0],
+               bp->color_palette[i].array[1],
+               bp->color_palette[i].array[2],
+               bp->color_palette[i].array[3]
         );
     }
 
