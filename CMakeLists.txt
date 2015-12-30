@@ -2,7 +2,13 @@ cmake_minimum_required(VERSION 2.8.9)
 
 set(CMAKE_C_STANDARD 11)
 
-project("libblueprint")
+project(libblueprint C)
+
+set(VERSION_MAJOR 1)
+set(VERSION_MINOR 0)
+set(VERSION_PATCH 0)
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(SRCS
     src/blueprint.c
